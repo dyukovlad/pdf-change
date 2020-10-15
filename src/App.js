@@ -116,25 +116,32 @@ function App() {
     });
   };
 
+  const del = () => {
+    setFiles([]);
+  };
+
   return (
     <div className="MyComponent">
       <div className="MyComponent__sidebar">
         <div>
           <div>
-            Файл 1
             <label className="custom-file-upload">
               <input type="file" onChange={uploadFile} />
+              Файл 1
             </label>
+            {files[0]?.name}
           </div>
 
           <div>
-            Файл 2
             <label className="custom-file-upload">
               <input type="file" onChange={uploadFile} />
+              Файл 2
             </label>
+            {files[1]?.name}
           </div>
 
           <button onClick={diff}>Сравнить</button>
+          <button onClick={del}>Удалить</button>
         </div>
       </div>
 
