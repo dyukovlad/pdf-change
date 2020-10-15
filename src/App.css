@@ -1,0 +1,15 @@
+.MyComponent{
+    display: flex;
+    flex-direction: row;
+}
+
+.uploadFiles{
+    width: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.webviewer{
+    width: 100%;
+}

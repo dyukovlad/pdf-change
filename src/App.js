@@ -1,6 +1,9 @@
 import React, { useRef, useEffect, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import WebViewer from "@pdftron/webviewer";
+
+import "./App.css";
+
 let web;
 function App() {
   const viewer = useRef(null);
@@ -36,6 +39,10 @@ function App() {
       instance.setLanguage("ru");
 
       const { PDFNet, CoreControls } = instance;
+
+      /*       if (Object.keys(files).length > 0) {
+        instance.loadDocument(files, { filename: files.name });
+      } */
 
       await PDFNet.initialize();
 
@@ -93,25 +100,16 @@ function App() {
         });
       }
 
-      await chain; // wait for our chain to resolve
+      await chain;
       newDoc.unlock();
 
       instance.loadDocument(newDoc);
-
-      /*       if (Object.keys(files).length > 0) {
-        instance.loadDocument(files, { filename: files.name });
-      } */
-
-      /*  const { docViewer } = instance;
-      docViewer.on("documentLoaded", () => {
-        // perform document operations
-      }); */
     });
   }, [files]);
 
   return (
     <div className="MyComponent">
-      <div {...getRootProps()}>
+      <div className="uploadFiles" {...getRootProps()}>
         <input {...getInputProps()} />
         <p>Выбирите файл или файлы</p>
       </div>
