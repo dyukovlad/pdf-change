@@ -53,7 +53,7 @@ function App() {
       } */
 
     web.then(async (instance) => {
-      const { PDFNet, CoreControls, docViewer } = instance;
+      const { PDFNet, CoreControls /* docViewer */ } = instance;
 
       await PDFNet.initialize();
 
