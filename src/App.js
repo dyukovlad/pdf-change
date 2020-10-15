@@ -18,11 +18,12 @@ function App() {
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
-
   useEffect(() => {
     web = WebViewer(
       {
         path: "lib",
+        showLocalFilePicker: true,
+        fullAPI: true,
       },
       viewer.current
     ).then(async (instance) => {
