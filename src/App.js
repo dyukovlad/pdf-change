@@ -18,21 +18,24 @@ function App() {
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
   useEffect(() => {
     web = WebViewer(
       {
         path: "lib",
         showLocalFilePicker: true,
         fullAPI: true,
+        licenseKey: null,
       },
       viewer.current
-    ).then(async (instance) => {
+    );
+  }, []);
+
+  useEffect(() => {
+    web.then(async (instance) => {
       instance.setLanguage("ru");
 
-      console.log("instance", instance);
-
-      const PDFNet = instance.PDFNet;
-      const CoreControls = instance.CoreControls;
+      const { PDFNet, CoreControls } = instance;
 
       await PDFNet.initialize();
 
@@ -104,7 +107,7 @@ function App() {
         // perform document operations
       }); */
     });
-  }, []);
+  }, [files]);
 
   return (
     <div className="MyComponent">
