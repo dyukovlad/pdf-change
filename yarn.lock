@@ -1296,6 +1296,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@kunukn/react-collapse@^1":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@kunukn/react-collapse/-/react-collapse-1.2.7.tgz#be96ccc11021acb923de96678b62e7de73ea89fe"
+  integrity sha512-Ez4CqaPqYFdYX8k8A0Y0640tEZT6oo+Lj3g3KyzuWjkl6uOBrnBohxyUfrCoS6wYVun9GUOgRH5V3pSirrmJDQ==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"

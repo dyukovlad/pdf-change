@@ -1,12 +1,14 @@
 import React, { useRef, useEffect, useState } from "react";
 //import { useDropzone } from "react-dropzone";
 import WebViewer from "@pdftron/webviewer";
+import Collapse from "@kunukn/react-collapse";
 
 import "./App.css";
 
 let web;
 function App() {
   const viewer = useRef(null);
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const [files, setFiles] = useState([]);
 
@@ -123,26 +125,36 @@ function App() {
   return (
     <div className="MyComponent">
       <div className="MyComponent__sidebar">
-        <div>
-          <div>
-            <label className="custom-file-upload">
-              <input type="file" onChange={uploadFile} />
-              Файл 1
-            </label>
-            {files[0]?.name}
-          </div>
+        <h3>Дополнительные функции</h3>
 
-          <div>
-            <label className="custom-file-upload">
-              <input type="file" onChange={uploadFile} />
-              Файл 2
-            </label>
-            {files[1]?.name}
-          </div>
-
-          <button onClick={diff}>Сравнить</button>
-          <button onClick={del}>Удалить</button>
+        <div
+          className="collapsible"
+          onClick={() => setIsOpen((state) => !state)}
+        >
+          Сравнение 2х файлов
         </div>
+        <Collapse isOpen={isOpen}>
+          <div>
+            <div>
+              <label className="custom-file-upload">
+                <input type="file" onChange={uploadFile} />
+                Файл 1
+              </label>
+              {files[0]?.name}
+            </div>
+
+            <div>
+              <label className="custom-file-upload">
+                <input type="file" onChange={uploadFile} />
+                Файл 2
+              </label>
+              {files[1]?.name}
+            </div>
+
+            <button onClick={diff}>Сравнить</button>
+            <button onClick={del}>Удалить</button>
+          </div>
+        </Collapse>
       </div>
 
       <div className="webviewer" ref={viewer} />
