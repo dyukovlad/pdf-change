@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useCallback, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useRef, useEffect, useState } from "react";
+//import { useDropzone } from "react-dropzone";
 import WebViewer from "@pdftron/webviewer";
 
 import "./App.css";
@@ -10,7 +10,7 @@ function App() {
 
   const [files, setFiles] = useState([]);
 
-  const onDrop = useCallback((acceptedFiles) => {
+  /*   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -20,7 +20,7 @@ function App() {
     });
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({ onDrop }); */
 
   useEffect(() => {
     web = WebViewer(
@@ -32,17 +32,28 @@ function App() {
       },
       viewer.current
     );
+    web.then((instance) => instance.setLanguage("ru"));
   }, []);
 
-  useEffect(() => {
-    web.then(async (instance) => {
-      instance.setLanguage("ru");
+  const uploadFile = (e) => {
+    let file = e.target.files;
+    /* let filesArr = Array.prototype.slice.call(file); */
+    setFiles([...files, ...file]);
+  };
 
-      const { PDFNet, CoreControls } = instance;
+  const diff = () => {
+    console.log("files", files);
 
-      /*       if (Object.keys(files).length > 0) {
+    if (files.length < 2) {
+      return;
+    }
+
+    /*       if (Object.keys(files).length > 0) {
         instance.loadDocument(files, { filename: files.name });
       } */
+
+    web.then(async (instance) => {
+      const { PDFNet, CoreControls, docViewer } = instance;
 
       await PDFNet.initialize();
 
@@ -52,12 +63,8 @@ function App() {
       };
 
       const [doc1, doc2] = await Promise.all([
-        getDocument(
-          "https://s3.amazonaws.com/pdftron/pdftron/example/test_doc_1.pdf"
-        ),
-        getDocument(
-          "https://s3.amazonaws.com/pdftron/pdftron/example/test_doc_2.pdf"
-        ),
+        getDocument(files[0]),
+        getDocument(files[1]),
       ]);
 
       const getPageArray = async (doc) => {
@@ -104,16 +111,34 @@ function App() {
       newDoc.unlock();
 
       instance.loadDocument(newDoc);
+
+      //  docViewer.on("documentLoaded", () => {});
     });
-  }, [files]);
+  };
 
   return (
     <div className="MyComponent">
-      <div className="uploadFiles" {...getRootProps()}>
-        <input {...getInputProps()} />
-        <p>Выбирите файл или файлы</p>
+      <div className="MyComponent__sidebar">
+        <div>
+          <div>
+            Файл 1
+            <label className="custom-file-upload">
+              <input type="file" onChange={uploadFile} />
+            </label>
+          </div>
+
+          <div>
+            Файл 2
+            <label className="custom-file-upload">
+              <input type="file" onChange={uploadFile} />
+            </label>
+          </div>
+
+          <button onClick={diff}>Сравнить</button>
+        </div>
       </div>
-      <div className="webviewer" ref={viewer} style={{ height: "100vh" }}></div>
+
+      <div className="webviewer" ref={viewer} />
     </div>
   );
 }
