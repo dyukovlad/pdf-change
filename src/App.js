@@ -28,6 +28,7 @@ function App() {
     web = WebViewer(
       {
         path: "lib",
+        pdftronServer: "http://192.168.88.254:8090/",
         showLocalFilePicker: true,
         fullAPI: true,
         licenseKey: null,
@@ -44,15 +45,9 @@ function App() {
   };
 
   const diff = () => {
-    console.log("files", files);
-
     if (files.length < 2) {
       return;
     }
-
-    /*       if (Object.keys(files).length > 0) {
-        instance.loadDocument(files, { filename: files.name });
-      } */
 
     web.then(async (instance) => {
       const { PDFNet, CoreControls /* docViewer */ } = instance;
@@ -122,10 +117,40 @@ function App() {
     setFiles([]);
   };
 
+  const open = () => {
+    if (files.length < 1) {
+      return;
+    }
+    web.then(async (instance) => {
+      const { docViewer } = instance;
+      instance.loadDocument(files[0], { filename: files[0].name });
+      instance.openElements(["leftPanel"]);
+      instance.setActiveLeftPanel("layersPanel");
+      docViewer.on("pageComplete", () => {
+        instance.closeElements(["loadingModal"]);
+      });
+    });
+  };
+
   return (
     <div className="MyComponent">
       <div className="MyComponent__sidebar">
         <h3>Дополнительные функции</h3>
+
+        <div>Открыть файл</div>
+        <div>
+          <div>
+            <label className="custom-file-upload">
+              <input type="file" onChange={uploadFile} />
+              Файл
+            </label>
+            <br />
+            {files[0]?.name}
+          </div>
+
+          <button onClick={open}>Открыть</button>
+          <button onClick={del}>Удалить</button>
+        </div>
 
         <div
           className="collapsible"
