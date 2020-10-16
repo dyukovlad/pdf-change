@@ -1,46 +1,56 @@
 import React, { useRef, useEffect, useState } from "react";
-//import { useDropzone } from "react-dropzone";
 import WebViewer from "@pdftron/webviewer";
-import Collapse from "@kunukn/react-collapse";
+import Sidebar from "react-sidebar";
 
 import "./App.css";
 
 let web;
 function App() {
   const viewer = useRef(null);
-  const [isOpen, setIsOpen] = React.useState(false);
 
   const [files, setFiles] = useState([]);
-
-  /*   const onDrop = useCallback((acceptedFiles) => {
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        setFiles(file);
-      };
-    });
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({ onDrop }); */
+  const [openBar, setOpenBar] = useState(false);
 
   useEffect(() => {
     web = WebViewer(
       {
         path: "lib",
-        pdftronServer: "http://192.168.88.254:8090/",
+        pdftronServer: "https://pdftronsrv.microservice.aniklab.com/",
         showLocalFilePicker: true,
         fullAPI: true,
         licenseKey: null,
+        enableRedaction: true,
       },
       viewer.current
     );
-    web.then((instance) => instance.setLanguage("ru"));
+    web.then(async (instance) => {
+      const { docViewer } = instance;
+      instance.setLanguage("ru");
+
+      instance.setHeaderItems((header) => {
+        header.push({
+          type: "actionButton",
+          img:
+            '<svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"></path><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"></path></svg>',
+          onClick: () => {
+            // save the annotations
+            setOpenBar(!openBar);
+          },
+        });
+      });
+
+      docViewer.on("documentLoaded", () => {
+        // perform document operations
+        console.log("object loaded");
+        instance.openElements(["leftPanel"]);
+        instance.setActiveLeftPanel("layersPanel");
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const uploadFile = (e) => {
     let file = e.target.files;
-    /* let filesArr = Array.prototype.slice.call(file); */
     setFiles([...files, ...file]);
   };
 
@@ -50,7 +60,7 @@ function App() {
     }
 
     web.then(async (instance) => {
-      const { PDFNet, CoreControls /* docViewer */ } = instance;
+      const { PDFNet, CoreControls } = instance;
 
       await PDFNet.initialize();
 
@@ -108,8 +118,6 @@ function App() {
       newDoc.unlock();
 
       instance.loadDocument(newDoc);
-
-      //  docViewer.on("documentLoaded", () => {});
     });
   };
 
@@ -117,7 +125,11 @@ function App() {
     setFiles([]);
   };
 
-  const open = () => {
+  const onSetSidebarOpen = () => {
+    setOpenBar(!openBar);
+  };
+
+  /*   const open = () => {
     if (files.length < 1) {
       return;
     }
@@ -126,63 +138,50 @@ function App() {
       instance.loadDocument(files[0], { filename: files[0].name });
       instance.openElements(["leftPanel"]);
       instance.setActiveLeftPanel("layersPanel");
+
       docViewer.on("pageComplete", () => {
         instance.closeElements(["loadingModal"]);
       });
     });
-  };
+  }; */
 
   return (
     <div className="MyComponent">
-      <div className="MyComponent__sidebar">
-        <h3>Дополнительные функции</h3>
+      <Sidebar
+        sidebar={
+          <div className="MyComponent__sidebar">
+            <h3>Дополнительные функции</h3>
 
-        <div>Открыть файл</div>
-        <div>
-          <div>
-            <label className="custom-file-upload">
-              <input type="file" onChange={uploadFile} />
-              Файл
-            </label>
-            <br />
-            {files[0]?.name}
-          </div>
-
-          <button onClick={open}>Открыть</button>
-          <button onClick={del}>Удалить</button>
-        </div>
-
-        <div
-          className="collapsible"
-          onClick={() => setIsOpen((state) => !state)}
-        >
-          Сравнение 2х файлов
-        </div>
-        <Collapse isOpen={isOpen}>
-          <div>
-            <div>
-              <label className="custom-file-upload">
-                <input type="file" onChange={uploadFile} />
-                Файл 1
-              </label>
-              {files[0]?.name}
-            </div>
+            <div className="collapsible">Сравнение 2х файлов</div>
 
             <div>
-              <label className="custom-file-upload">
-                <input type="file" onChange={uploadFile} />
-                Файл 2
-              </label>
-              {files[1]?.name}
+              <div>
+                <label className="custom-file-upload">
+                  <input type="file" onChange={uploadFile} />
+                  Файл 1
+                </label>
+                {files[0]?.name}
+              </div>
+
+              <div>
+                <label className="custom-file-upload">
+                  <input type="file" onChange={uploadFile} />
+                  Файл 2
+                </label>
+                {files[1]?.name}
+              </div>
+
+              <button onClick={diff}>Сравнить</button>
+              <button onClick={del}>Удалить</button>
             </div>
-
-            <button onClick={diff}>Сравнить</button>
-            <button onClick={del}>Удалить</button>
           </div>
-        </Collapse>
-      </div>
-
-      <div className="webviewer" ref={viewer} />
+        }
+        open={openBar}
+        onSetOpen={onSetSidebarOpen}
+        styles={{ sidebar: { background: "white" } }}
+      >
+        <div className="webviewer" ref={viewer} />
+      </Sidebar>
     </div>
   );
 }
