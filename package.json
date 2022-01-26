@@ -1,10 +1,10 @@
 {
   "name": "pdf-changes",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@kunukn/react-collapse": "^1.2.7",
-    "@pdftron/webviewer": "^7.1.2",
+    "@pdftron/webviewer": "7.3.4-20220125",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
